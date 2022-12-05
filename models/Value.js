@@ -5,11 +5,9 @@ const Schema = mongoose.Schema;
 const ValuesSchema = new Schema({
   deviceId:{type: String, required: true},
   date:{type: Number, required: true},
-  temperature: {type: String, required: true},
-  humidity: {type: String, required: true},
-  wind_direction: {type: String, required: true},
-  wind_intensity: {type: String, required: true},
-  rain_height: {type: String, required: true}
+  temperatura: {type: String, required: true},
+  humedad: {type: String, required: true},
+  ph: {type: String, required: true},
 });
 
 mongoose.model('values', ValuesSchema);
