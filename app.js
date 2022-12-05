@@ -41,14 +41,12 @@ io.on('connection', function(socket){
   });
 
   const subscriptionName1 = 'projects/trabajodegrado-369023/subscriptions/my-subscription';
-  const subscriptionName2 = 'projects/awesome-sylph-271611/subscriptions/assignment4-subscription';
   // Creates a client; cache this for further use
   const pubSubClient = new PubSub();
 
   function listenForMessages() {
     // References an existing subscription
     const subscription1 = pubSubClient.subscription(subscriptionName1);
-    const subscription2 = pubSubClient.subscription(subscriptionName2);
     // Create an event handler to handle messages
 
     /********************************************* ENVIRONMENTAL STATIONS *********************************************/
@@ -60,72 +58,24 @@ io.on('connection', function(socket){
 
       const newValue = {
         deviceId: payload.deviceId,
-        temperature: payload.temperature,
-        humidity: payload.humidity,
-        wind_direction: payload.wind_direction,
-        wind_intensity: payload.wind_intensity,
-        rain_height: payload.rain_height,
+        temperatura: payload.temperatura,
+        humedad: payload.humedad,
+        ph: payload.ph,
         date: payload.date
       };
       new Values(newValue).save();
 
       // TEMPERATURE
-      io.emit("temperature", (payload.deviceId + ";" + payload.temperature + ";" + payload.date).toString());
+      io.emit("temperatura", (payload.deviceId + ";" + payload.temperatura + ";" + payload.date).toString());
       // HUMIDITY
-      io.emit("humidity", (payload.deviceId + ";" + payload.humidity + ";" + payload.date).toString());
-      // WIND DIRECTION
-      io.emit("wind-dir", (payload.deviceId + ";" + payload.wind_direction + ";" + payload.date).toString());
-      // WIND INTENSITY
-      io.emit("wind-int", (payload.deviceId + ";" + payload.wind_intensity + ";" + payload.date).toString());
-      // RAIN HEIGHT
-      io.emit("rain", (payload.deviceId + ";" + payload.rain_height + ";" + payload.date).toString());
-      // "Ack" (acknowledge receipt of) the message
-      message.ack();
-    };
-
-    /********************************************* USER ACTIVITY RECOGNITION *********************************************/
-    const messageHandler2 = message => {
-      console.log(`Received message ${message.id}:`);
-      console.log('\tData:' + message.data);
-      console.log(`\tAttributes: ${message.attributes}`);
-      var payload = JSON.parse(message.data);
-      
-      /********************************* CLOUD BASED ***************************************/
-      if(payload.flag == 0){
-        var status = predict(payload.x, payload.y, payload.z);
-
-        const newValue = {
-          deviceId: payload.user_id,
-          x: payload.x,
-          y: payload.y,
-          z: payload.z,
-          magnitude: (Math.hypot(payload.x, payload.y, payload.z)).toFixed(3),
-          date: parseInt(Date.now()/1000),
-          status: status
-        };
-        new AccelCloud(newValue).save();
-
-        io.emit('status_cloud', JSON.stringify(newValue));
-      }
-
-      /*********************************** EDGE BASED ***************************************/
-      else{
-        const newValue = {
-          deviceId: payload.user_id,
-          date: parseInt(Date.now()/1000),
-          status: payload.activity
-        };
-        new AccelEdge(newValue).save();
-
-        io.emit('status_edge', JSON.stringify(newValue));
-      }
-
+      io.emit("humedad", (payload.deviceId + ";" + payload.humedad + ";" + payload.date).toString());
+      // PH HEIGHT
+      io.emit("ph", (payload.deviceId + ";" + payload.ph + ";" + payload.date).toString());
       // "Ack" (acknowledge receipt of) the message
       message.ack();
     };
 
     // Listen for new messages until timeout is hit
-    subscription2.on('message', messageHandler2);
     subscription1.on('message', messageHandler1);
   }
   listenForMessages();
@@ -149,7 +99,7 @@ app.use(methodOverride('_method'));
 // Map global promise - get rid of warning
 mongoose.Promise = global.Promise;
 //connect to mongoose
-const uri = "mongodb+srv://assignment1:5JuACpmKysNwVGae@cluster0-1fa34.gcp.mongodb.net/IoT-assignment1";
+const uri = "mongodb+srv://jeyepezv:Yuki17129718@tdg.yfkyoeg.mongodb.net/?retryWrites=true&w=majority";
 mongoose.connect(uri, {
   useNewUrlParser: true
 })
@@ -170,23 +120,6 @@ app.get('/environmentalstations', function (req, res) {
   ).sort({date:-1}).then(values =>{
     res.render('envstat', {values:values});
   })
-});
-
-// GET route for user activity recognition dashboard
-app.get('/useractivityrecognition', function (req, res) {
-
-  // CLOUD BASED
-  AccelCloud.find(
-    { date: { $gt: parseInt(Date.now()/1000) - 3600 } }
-  ).sort({date:-1}).then(values_cloud => {
-
-    // EDGE BASED
-    AccelEdge.find(
-      { date: { $gt: parseInt(Date.now()/1000) - 3600 } }
-    ).sort({date:-1}).then(values_edge => {
-      res.render('uar', {values_cloud:values_cloud, values_edge:values_edge});
-    });
-  });
 });
 
 // Starting Server
