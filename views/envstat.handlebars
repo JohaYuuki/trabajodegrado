@@ -157,36 +157,22 @@
           if(charttemp.data.labels.length == 0 && values.length > 0){
             values.reverse()
             values.forEach( value =>{
-              charttemp.data.datasets[0].data.push(value.temperature)
-              charttemp.data.sum = parseInt(charttemp.data.sum) + parseInt(value.temperature)
+              charttemp.data.datasets[0].data.push(value.temperatura)
+              charttemp.data.sum = parseInt(charttemp.data.sum) + parseInt(value.temperatura)
               charttemp.data.labels.push('');
               charttemp.update();
               charttempavg.data.datasets[0].data.push(parseInt(charttemp.data.sum)/charttemp.data.datasets[0].data.length)
               charttempavg.data.labels.push('');
               charttempavg.update();
-              charthum.data.datasets[0].data.push(value.humidity)
-              charthum.data.sum = parseInt(charthum.data.sum) + parseInt(value.humidity)
+              charthum.data.datasets[0].data.push(value.humedad)
+              charthum.data.sum = parseInt(charthum.data.sum) + parseInt(value.humedad)
               charthum.data.labels.push('');
               charthum.update();
               charthumavg.data.datasets[0].data.push(parseInt(charthum.data.sum)/charthum.data.datasets[0].data.length)
               charthumavg.data.labels.push('');
               charthumavg.update();
-              chartwinddir.data.datasets[0].data.push(value.wind_direction)
-              chartwinddir.data.sum = parseInt(chartwinddir.data.sum) + parseInt(value.wind_direction)
-              chartwinddir.data.labels.push('');
-              chartwinddir.update();
-              chartwdiravg.data.datasets[0].data.push(parseInt(chartwinddir.data.sum)/chartwinddir.data.datasets[0].data.length)
-              chartwdiravg.data.labels.push('');
-              chartwdiravg.update();
-              chartwindint.data.datasets[0].data.push(value.wind_intensity)
-              chartwindint.data.sum = parseInt(chartwindint.data.sum) + parseInt(value.wind_intensity)
-              chartwindint.data.labels.push('');
-              chartwindint.update();
-              chartwintavg.data.datasets[0].data.push(parseInt(chartwindint.data.sum)/chartwindint.data.datasets[0].data.length)
-              chartwintavg.data.labels.push('');
-              chartwintavg.update();
-              chartrain.data.datasets[0].data.push(value.rain_height)
-              chartrain.data.sum = parseInt(chartrain.data.sum) + parseInt(value.rain_height)
+              chartrain.data.datasets[0].data.push(value.ph)
+              chartrain.data.sum = parseInt(chartrain.data.sum) + parseInt(value.ph)
               chartrain.data.labels.push('');
               chartrain.update();
               chartrainavg.data.datasets[0].data.push(parseInt(chartrain.data.sum)/chartrain.data.datasets[0].data.length)
@@ -195,14 +181,12 @@
             });
             $('#avg-temp').html('<h4 align="center">' + (parseInt(charttemp.data.sum)/charttemp.data.datasets[0].data.length).toFixed(2) + ' °C</h4>');
             $('#avg-hum').html('<h4 align="center">' + (parseInt(charthum.data.sum)/charthum.data.datasets[0].data.length).toFixed(2) + ' %</h4>');
-            $('#avg-wind-dir').html('<h4 align="center">' + (parseInt(chartwinddir.data.sum)/chartwinddir.data.datasets[0].data.length).toFixed(2) + ' °</h4>');
-            $('#avg-wind-int').html('<h4 align="center">' + (parseInt(chartwindint.data.sum)/chartwindint.data.datasets[0].data.length).toFixed(2) + ' m/s</h4>');
-            $('#avg-rain').html('<h4 align="center">' + (parseInt(chartrain.data.sum)/chartrain.data.datasets[0].data.length).toFixed(2) + ' mm/h</h4>');
+            $('#avg-rain').html('<h4 align="center">' + (parseInt(chartrain.data.sum)/chartrain.data.datasets[0].data.length).toFixed(2) + ' </h4>');
           }
         });
 
         /************************ LATEST VALUES MANAGEMENT ***************************/
-        socket.on('temperature', function(data){
+        socket.on('temperatura', function(data){
           var payload = data.split(";");
           $('#latest-temp').html('<h4 align="center">' + payload[1] + ' °C</h4>');
           $('#lasthour-temp').prepend('<c><font size="2">' + "<"+ payload[1] + " °C> " +'</font></c>');
@@ -216,7 +200,7 @@
           charttemp.update();
           $('#avg-temp').html('<h4 align="center">' + avg + ' °C</h4>');
         });
-        socket.on('humidity', function(data){
+        socket.on('humedad', function(data){
           var payload = data.split(";");
           $('#latest-hum').html('<h4 align="center">' + payload[1] + ' %</h4>');
           $('#lasthour-hum').prepend('<c><font size="2">' + "<"+ payload[1] + " %> " +'</font></c>');
@@ -230,38 +214,10 @@
           charthum.update();
           $('#avg-hum').html('<h4 align="center">' + avg + ' %</h4>');
         });
-        socket.on('wind-dir', function(data){
+        socket.on('ph', function(data){
           var payload = data.split(";");
-          $('#latest-wind-dir').html('<h4 align="center">' + payload[1] + ' °</h4>');
-          $('#lasthour-wind-dir').prepend('<c><font size="2">' + "<"+ payload[1] + " °> " +'</font></c>');
-          chartwinddir.data.datasets[0].data.push(payload[1]);
-          chartwinddir.data.labels.push('');
-          chartwinddir.data.sum = parseInt(chartwinddir.data.sum) + parseInt(payload[1]);
-          var avg = (parseInt(chartwinddir.data.sum)/chartwinddir.data.datasets[0].data.length).toFixed(2);
-          chartwdiravg.data.datasets[0].data.push(avg);
-          chartwdiravg.data.labels.push('');
-          chartwdiravg.update();
-          chartwinddir.update();
-          $('#avg-wind-dir').html('<h4 align="center">' + avg + ' °</h4>');
-        });
-        socket.on('wind-int', function(data){
-          var payload = data.split(";");
-          $('#latest-wind-int').html('<h4 align="center">' + payload[1] + ' m/s</h4>');
-          $('#lasthour-wind-int').prepend('<c><font size="2">' + "<"+ payload[1] + " m/s> " +'</font></c>');
-          chartwindint.data.datasets[0].data.push(payload[1]);
-          chartwindint.data.labels.push('');
-          chartwindint.data.sum = parseInt(chartwindint.data.sum) + parseInt(payload[1]);
-          var avg = (parseInt(chartwindint.data.sum)/chartwindint.data.datasets[0].data.length).toFixed(2);
-          chartwintavg.data.datasets[0].data.push(avg);
-          chartwintavg.data.labels.push('');
-          chartwindint.update();
-          chartwintavg.update();
-          $('#avg-wind-int').html('<h4 align="center">' + avg + ' m/s</h4>');
-        });
-        socket.on('rain', function(data){
-          var payload = data.split(";");
-          $('#latest-rain').html('<h4 align="center">' + payload[1] + ' mm/h</h4>');
-          $('#lasthour-rain').prepend('<c><font size="2">' + "<"+ payload[1] + " mm/h> " +'</font></c>');
+          $('#latest-rain').html('<h4 align="center">' + payload[1] + ' </h4>');
+          $('#lasthour-rain').prepend('<c><font size="2">' + "<"+ payload[1] + " > " +'</font></c>');
           chartrain.data.datasets[0].data.push(payload[1]);
           chartrain.data.labels.push('');
           chartrain.data.sum = parseInt(chartrain.data.sum) + parseInt(payload[1]);
@@ -270,7 +226,7 @@
           chartrainavg.data.labels.push('');
           chartrain.update();
           chartrainavg.update();
-          $('#avg-rain').html('<h4 align="center">' + avg + ' mm/h</h4>');
+          $('#avg-rain').html('<h4 align="center">' + avg + ' </h4>');
         });
         /**************************************************************************************************************/
       });
