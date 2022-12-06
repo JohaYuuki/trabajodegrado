@@ -13,10 +13,10 @@ const io = require('socket.io')(http);
 //load values model
 require('./models/Value');
 const Values = mongoose.model('values');
-require('./models/Accel_cloud');
-const AccelCloud = mongoose.model('accel_cloud');
-require('./models/Accel_edge');
-const AccelEdge = mongoose.model('accel_edge');
+//require('./models/Accel_cloud');
+//const AccelCloud = mongoose.model('accel_cloud');
+//require('./models/Accel_edge');
+//const AccelEdge = mongoose.model('accel_edge');
 
 //handlebars helpers
 const {stripTags} = require('./helpers/hbs');
@@ -58,17 +58,17 @@ io.on('connection', function(socket){
 
       const newValue = {
         deviceId: payload.deviceId,
-        temperature: payload.temperature,
-        humidity: payload.humidity,
+        temperatura: payload.temperatura,
+        humedad: payload.humedad,
         ph: payload.ph,
         date: payload.date
       };
       new Values(newValue).save();
 
       // TEMPERATURE
-      io.emit("temperature", (payload.deviceId + ";" + payload.temperature + ";" + payload.date).toString());
+      io.emit("temperatura", (payload.deviceId + ";" + payload.temperatura + ";" + payload.date).toString());
       // HUMIDITY
-      io.emit("humidity", (payload.deviceId + ";" + payload.humidity + ";" + payload.date).toString());
+      io.emit("humedad", (payload.deviceId + ";" + payload.humedad + ";" + payload.date).toString());
       // PH HEIGHT
       io.emit("ph", (payload.deviceId + ";" + payload.ph + ";" + payload.date).toString());
       // "Ack" (acknowledge receipt of) the message
