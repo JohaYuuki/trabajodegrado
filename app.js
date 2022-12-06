@@ -13,6 +13,7 @@ const io = require('socket.io')(http);
 //load values model
 require('./models/Value');
 const Values = mongoose.model('values');
+console.log("Hola 1");
 //require('./models/Accel_cloud');
 //const AccelCloud = mongoose.model('accel_cloud');
 //require('./models/Accel_edge');
@@ -31,7 +32,7 @@ function predict(x, y, z){
   if(magnitude > 9.05 && magnitude < 9.95) return 1;
   else return 0;
 }
-
+console.log("Hola 2");
 // Imports the Google Cloud client library
 io.on('connection', function(socket){
   var values = Values.find(
@@ -39,7 +40,7 @@ io.on('connection', function(socket){
   ).sort({date:-1}).then(values => {
     io.emit("lastvalues", values);
   });
-
+  console.log("Hola 3");
   const subscriptionName1 = 'projects/trabajodegrado-369023/subscriptions/my-subscription';
   // Creates a client; cache this for further use
   const pubSubClient = new PubSub();
@@ -81,11 +82,12 @@ io.on('connection', function(socket){
   listenForMessages();
 });
 /***********************************************************************************************************************/
-
+console.log("Hola 4");
 //handlebars middleware
 app.engine('handlebars', exphbs({
   helpers: {stripTags: stripTags, eq:eq },
   defaultLayout: 'main'}));
+  console.log("Hola 5");
 app.set('view engine', 'handlebars');
 
 //body parser middleware
@@ -100,6 +102,7 @@ app.use(methodOverride('_method'));
 mongoose.Promise = global.Promise;
 //connect to mongoose
 const uri = "mongodb+srv://jeyepezv:Yuki17129718@tdg.yfkyoeg.mongodb.net/test"; 
+console.log("Hola 6");
 mongoose.connect(uri, {
   useNewUrlParser: true
 })
@@ -115,6 +118,7 @@ app.get('/', function (req, res) {
 
 // GET route for environmental dashboard
 app.get('/environmentalstations', function (req, res) {
+  console.log("Hola");
   Values.find(
     { date: { $gt: parseInt(Date.now()/1000) - 3600 } }
   ).sort({date:-1}).then(values =>{
