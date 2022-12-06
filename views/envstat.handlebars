@@ -37,7 +37,7 @@
               responsive: true,
               title: {
                 display: true,
-                text: 'Temperature (°C)'
+                text: 'Temperatura (°C)'
               },
               scales: {
                 yAxes: [{
@@ -80,7 +80,7 @@
               responsive: true,
               title: {
                 display: true,
-                text: 'Humidity (%)'
+                text: 'Humedad (%)'
               },
               scales: {
                 yAxes: [{
@@ -109,93 +109,6 @@
               }  
             }
         });
-        var ctx2 = document.getElementById('wind-dir-chart').getContext('2d');
-        var chartwinddir = new Chart(ctx2, {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [{ fill:false, label: 'Wind direction', backgroundColor: '#F78181', borderColor: '#F78181',
-                    data: []
-                }],
-                sum: 0,
-            },
-            options: { 
-              responsive: true,
-              title: {
-                display: true,
-                text: 'Wind direction (degrees)'
-              },
-              scales: {
-                yAxes: [{
-                  ticks: { suggestedMin: 0, suggestedMax: 360 }
-                }]
-              }
-            }
-        });
-        var ctx2a = document.getElementById('wdir-chart-avg').getContext('2d');
-        var chartwdiravg = new Chart(ctx2a, {
-            // The type of chart we want to create
-            type: 'line',
-            // The data for our dataset
-            data: {
-                labels: [],
-                datasets: [{fill:false, label: 'Average', backgroundColor: '#ff0066', borderColor: '#ff0066',
-                    data: []
-                }]
-            },
-            options: {
-              responsive: true,
-              scales: {
-                yAxes: [{
-                  ticks: { suggestedMin: 0, suggestedMax: 360 }
-                }]
-              }
-            }
-        });
-        var ctx3 = document.getElementById('wind-int-chart').getContext('2d');
-        var chartwindint = new Chart(ctx3, {
-            type: 'line',
-            data: {
-                labels: [],
-                fill: false,
-                datasets: [{fill:false, label: 'Wind intensity', backgroundColor: '#9FF781', borderColor: '#9FF781',
-                    data: []
-                }],
-                sum: 0,
-            },
-            options: { 
-              responsive: true,
-              title: {
-                display: true,
-                text: 'Wind intensity (m/s)'
-              },
-              scales: {
-                yAxes: [{
-                  ticks: { suggestedMin: 0, suggestedMax: 100 }
-                }]
-              }
-            }
-        });
-        var ctx3a = document.getElementById('wint-chart-avg').getContext('2d');
-        var chartwintavg = new Chart(ctx3a, {
-            // The type of chart we want to create
-            type: 'line',
-            // The data for our dataset
-            data: {
-                labels: [],
-                datasets: [{fill:false, label: 'Average', backgroundColor: '#ff0066', borderColor: '#ff0066',
-                    data: []
-                }]
-            },
-            options: {
-              responsive: true,
-              scales: {
-                yAxes: [{
-                  ticks: { suggestedMin: 0, suggestedMax: 100 }
-                }]
-              }
-            }
-        });
         var ctx4 = document.getElementById('rain-chart').getContext('2d');
         var chartrain = new Chart(ctx4, {
             type: 'line',
@@ -210,7 +123,7 @@
               responsive: true,
               title: {
                 display: true,
-                text: 'Rain height (mm/h)'
+                text: 'PH'
               },
               scales: {
                 yAxes: [{

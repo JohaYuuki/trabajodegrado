@@ -58,17 +58,17 @@ io.on('connection', function(socket){
 
       const newValue = {
         deviceId: payload.deviceId,
-        temperatura: payload.temperatura,
-        humedad: payload.humedad,
+        temperature: payload.temperature,
+        humidity: payload.humidity,
         ph: payload.ph,
         date: payload.date
       };
       new Values(newValue).save();
 
       // TEMPERATURE
-      io.emit("temperatura", (payload.deviceId + ";" + payload.temperatura + ";" + payload.date).toString());
+      io.emit("temperature", (payload.deviceId + ";" + payload.temperature + ";" + payload.date).toString());
       // HUMIDITY
-      io.emit("humedad", (payload.deviceId + ";" + payload.humedad + ";" + payload.date).toString());
+      io.emit("humidity", (payload.deviceId + ";" + payload.humidity + ";" + payload.date).toString());
       // PH HEIGHT
       io.emit("ph", (payload.deviceId + ";" + payload.ph + ";" + payload.date).toString());
       // "Ack" (acknowledge receipt of) the message
