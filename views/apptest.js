@@ -1,3 +1,4 @@
+console.log("Hola");
 const express = require('express');
 const path = require('path');                       //for path navigation
 const bodyParser = require('body-parser');          //to access at req.value
@@ -83,7 +84,7 @@ io.on('connection', function(socket){
 /***********************************************************************************************************************/
 
 //handlebars middleware
-app.engine('handlebars', exphbs.engine({
+app.engine('handlebars', exphbs({
   helpers: {stripTags: stripTags, eq:eq },
   defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
