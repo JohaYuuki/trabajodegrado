@@ -84,7 +84,7 @@ io.on('connection', function(socket){
 /***********************************************************************************************************************/
 console.log("Hola 4");
 //handlebars middleware
-app.engine('handlebars', exphbs.engine({
+app.engine('handlebars', exphbs({
   helpers: {stripTags: stripTags, eq:eq },
   defaultLayout: 'main'}));
   console.log("Hola 5");
