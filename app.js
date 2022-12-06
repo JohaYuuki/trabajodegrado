@@ -83,7 +83,7 @@ io.on('connection', function(socket){
 /***********************************************************************************************************************/
 
 //handlebars middleware
-app.engine('handlebars', exphbs.engine({
+app.engine('handlebars', exphbs({
   helpers: {stripTags: stripTags, eq:eq },
   defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
