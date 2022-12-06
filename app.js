@@ -14,6 +14,7 @@ const io = require('socket.io')(http);
 require('./models/Value');
 const Values = mongoose.model('values');
 console.log("Hola 1");
+console.log(Values);
 //require('./models/Accel_cloud');
 //const AccelCloud = mongoose.model('accel_cloud');
 //require('./models/Accel_edge');
@@ -65,7 +66,11 @@ io.on('connection', function(socket){
         datetime: payload.datetime
       };
       new Values(newValue).save();
-
+      console.log(payload.id);
+      console.log(payload.datetime);
+      console.log(payload.temperatura);
+      console.log(payload.humedad);
+      console.log(payload.ph);
       // TEMPERATURE
       io.emit("temperatura", (payload.id + ";" + payload.temperatura + ";" + payload.datetime).toString());
       // HUMIDITY
@@ -84,7 +89,7 @@ io.on('connection', function(socket){
 /***********************************************************************************************************************/
 console.log("Hola 4");
 //handlebars middleware
-app.engine('handlebars', exphbs.engine({
+app.engine('handlebars', exphbs({
   helpers: {stripTags: stripTags, eq:eq },
   defaultLayout: 'main'}));
   console.log("Hola 5");

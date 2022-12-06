@@ -11,9 +11,9 @@
       }
 
       $(function () {
-        //var socket = io.connect('http://localhost:5000', {transports:['websocket']});
+        var socket = io.connect('http://localhost:5000', {transports:['websocket']});
         //var socket = io.connect('http://iot-assignment1.herokuapp.com', {transports:['websocket']});
-        var socket = io.connect('https://trabajodegrado.herokuapp.com', {transports:['websocket']});
+        //var socket = io.connect('https://trabajodegrado.herokuapp.com', {transports:['websocket']});
         
         
         /// Devices Management
@@ -158,6 +158,7 @@
             values.reverse()
             values.forEach( value =>{
               charttemp.data.datasets[0].data.push(value.temperatura)
+              console.log(value.temperatura);
               charttemp.data.sum = parseInt(charttemp.data.sum) + parseInt(value.temperatura)
               charttemp.data.labels.push('');
               charttemp.update();
@@ -165,6 +166,8 @@
               charttempavg.data.labels.push('');
               charttempavg.update();
               charthum.data.datasets[0].data.push(value.humedad)
+              console.log(value.humedad);
+              console.log(value.ph);
               charthum.data.sum = parseInt(charthum.data.sum) + parseInt(value.humedad)
               charthum.data.labels.push('');
               charthum.update();
