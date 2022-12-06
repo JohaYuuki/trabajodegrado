@@ -99,7 +99,7 @@ app.use(methodOverride('_method'));
 // Map global promise - get rid of warning
 mongoose.Promise = global.Promise;
 //connect to mongoose
-const uri = "mongodb+srv://jeyepezv:Yuki17129718@tdg.yfkyoeg.mongodb.net/?retryWrites=true&w=majority";
+const uri = "mongodb+srv://jeyepezv:Yuki17129718@tdg.yfkyoeg.mongodb.net/test"; 
 mongoose.connect(uri, {
   useNewUrlParser: true
 })
