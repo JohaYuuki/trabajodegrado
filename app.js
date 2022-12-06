@@ -1,4 +1,3 @@
-console.log("Hola");
 const express = require('express');
 const path = require('path');                       //for path navigation
 const bodyParser = require('body-parser');          //to access at req.value
