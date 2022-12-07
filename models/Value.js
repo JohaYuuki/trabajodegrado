@@ -3,10 +3,10 @@ const Schema = mongoose.Schema;
 
 // Value Schema
 const ValuesSchema = new Schema({
-  id:{type: String, required: true},
-  datetime:{type: Number, required: true},
-  temperatura: {type: String, required: true},
-  humedad: {type: String, required: true},
+  devideId:{type: String, required: true},
+  date:{type: Number, required: true},
+  temperature: {type: String, required: true},
+  humidity: {type: String, required: true},
   ph: {type: String, required: true},
 });
 

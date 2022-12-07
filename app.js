@@ -9,6 +9,7 @@ const exphbs = require('express-handlebars');       //front-end
 const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
+const timeout = 60;
 
 //load values model
 require('./models/Value');
@@ -45,36 +46,34 @@ io.on('connection', function(socket){
   const subscriptionName1 = 'projects/trabajodegrado-369023/subscriptions/my-subscription';
   // Creates a client; cache this for further use
   const pubSubClient = new PubSub();
-
   function listenForMessages() {
     // References an existing subscription
     const subscription1 = pubSubClient.subscription(subscriptionName1);
     // Create an event handler to handle messages
+    console.log("aun no Entre");
 
-    /********************************************* ENVIRONMENTAL STATIONS *********************************************/
-    const messageHandler1 = message => {
+    /********************************************* ENVIRONMENTAL STATIONS ********************************************/
+    let messageCount = 0;
+    const messageHandler = message => {
+      console.log("Entre");
       console.log(`Received message ${message.id}:`);
       console.log('\tData:' + message.data);
       console.log(`\tAttributes: ${message.attributes}`);
+      messageCount += 1;
       var payload = JSON.parse(message.data);
 
       const newValue = {
-        id: payload.id,
-        temperatura: payload.temperatura,
-        humedad: payload.humedad,
+        devideId: payload.id,
+        temperature: payload.temperatura,
+        humidity: payload.humedad,
         ph: payload.ph,
-        datetime: payload.datetime
+        date: payload.datetime
       };
       new Values(newValue).save();
-      console.log(payload.id);
-      console.log(payload.datetime);
-      console.log(payload.temperatura);
-      console.log(payload.humedad);
-      console.log(payload.ph);
       // TEMPERATURE
-      io.emit("temperatura", (payload.id + ";" + payload.temperatura + ";" + payload.datetime).toString());
+      io.emit("temperature", (payload.id + ";" + payload.temperatura + ";" + payload.datetime).toString());
       // HUMIDITY
-      io.emit("humedad", (payload.id + ";" + payload.humedad + ";" + payload.datetime).toString());
+      io.emit("humidity", (payload.id + ";" + payload.humedad + ";" + payload.datetime).toString());
       // PH HEIGHT
       io.emit("ph", (payload.id + ";" + payload.ph + ";" + payload.datetime).toString());
       // "Ack" (acknowledge receipt of) the message
@@ -82,8 +81,13 @@ io.on('connection', function(socket){
     };
 
     // Listen for new messages until timeout is hit
-    subscription1.on('message', messageHandler1);
+    subscription1.on('message', messageHandler);
+    setTimeout(() => {
+      subscription1.removeListener('message', messageHandler);
+      console.log(`${messageCount} message(s) received.`);
+    }, timeout * 1000);
   }
+  
   listenForMessages();
 });
 /***********************************************************************************************************************/
@@ -106,7 +110,7 @@ app.use(methodOverride('_method'));
 // Map global promise - get rid of warning
 mongoose.Promise = global.Promise;
 //connect to mongoose
-const uri = "mongodb+srv://jeyepezv:Yuki17129718@tdg.yfkyoeg.mongodb.net/test"; 
+const uri = "mongodb+srv://jeyepezv:Yuki17129718@tdg.yfkyoeg.mongodb.net/TdG"; 
 console.log("Hola 6");
 mongoose.connect(uri, {
   useNewUrlParser: true
