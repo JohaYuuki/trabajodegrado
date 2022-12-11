@@ -7,7 +7,7 @@ const ValuesSchema = new Schema({
   datetime:{type: String, required: true},
   temperatura: {type: String, required: false},
   humedad: {type: String, required: false},
-  //ph: {type: String, required: false},
+  ph: {type: String, required: false},
 });
 
 mongoose.model('values', ValuesSchema);
