@@ -15,8 +15,8 @@ const timeout = 60;
 require('./models/Value');
 const Values = mongoose.model('values');
 console.log("Hola 1");
-//require('./models/Accel_cloud');
-//const AccelCloud = mongoose.model('accel_cloud');
+require('./models/Accel_cloud');
+const AccelCloud = mongoose.model('accel_cloud');
 //require('./models/Accel_edge');
 //const AccelEdge = mongoose.model('accel_edge');
 
@@ -41,6 +41,11 @@ io.on('connection', function(socket){
   ).sort({date:-1}).then(values => {
     io.emit("lastvalues", values);
   });
+  var values_2 = AccelCloud.find(
+    { date: { $gt: parseInt(Date.now()/1000) - 3600 } }
+  ).sort({date:-1}).then(values_2 => {
+    io.emit("lastvalues2", values_2);
+  });
   console.log("Hola 3");
   const subscriptionName1 = 'projects/trabajodegrado-369023/subscriptions/data';
   // Creates a client; cache this for further use
@@ -53,7 +58,7 @@ io.on('connection', function(socket){
 
     /********************************************* ENVIRONMENTAL STATIONS ********************************************/
     let messageCount = 0;
-    const messageHandler = message => {
+    const messageHandler1 = message => {
       console.log("Entre");
       console.log(`Received message ${message.id}:`);
       console.log('\tData:' + message.data);
@@ -66,30 +71,47 @@ io.on('connection', function(socket){
         datetime: payload.datetime,
         temperatura: payload.temperatura,
         humedad: payload.humedad,
-        ph: payload.ph
+        //ph: payload.ph
       };
       new Values(newValue).save();
       console.log(payload.id);
       console.log(payload.datetime);
       console.log(payload.temperatura);
       console.log(payload.humedad);
-      console.log(payload.ph);
+      //console.log(payload.ph);
       // TEMPERATURE
       io.emit("temperatura", (payload.id + ";" + payload.temperatura + ";" + payload.datetime).toString());
       // HUMIDITY
       io.emit("humedad", (payload.id + ";" + payload.humedad + ";" + payload.datetime).toString());
       // PH HEIGHT
+      //io.emit("ph", (payload.id + ";" + payload.ph + ";" + payload.datetime).toString());
+      // "Ack" (acknowledge receipt of) the message
+      message.ack();
+    };
+    const messageHandler2 = message => {
+      console.log("Entre");
+      console.log(`Received message ${message.id}:`);
+      console.log('\tData:' + message.data);
+      console.log(`\tAttributes: ${message.attributes}`);
+      messageCount += 1;
+      var payload = JSON.parse(message.data);
+
+      const newValue = {
+        id: payload.id,
+        datetime: payload.datetime,
+        ph: payload.ph
+      };
+      new AccelCloud(newValue).save();
+      console.log(payload.id);
+      console.log(payload.datetime);
+      console.log(payload.ph);
       io.emit("ph", (payload.id + ";" + payload.ph + ";" + payload.datetime).toString());
       // "Ack" (acknowledge receipt of) the message
       message.ack();
     };
-
     // Listen for new messages until timeout is hit
-    subscription1.on('message', messageHandler);
-    setTimeout(() => {
-      subscription1.removeListener('message', messageHandler);
-      console.log(`${messageCount} message(s) received.`);
-    }, timeout * 1000);
+    subscription1.on('message', messageHandler2);
+    subscription1.on('message', messageHandler1);
   }
   
   listenForMessages();
@@ -131,7 +153,7 @@ app.get('/', function (req, res) {
 
 // GET route for environmental dashboard
 app.get('/environmentalstations', function (req, res) {
-  console.log("Hola");
+  console.log("HolaNodo1");
   Values.find(
     { date: { $gt: parseInt(Date.now()/1000) - 3600 } }
   ).sort({date:-1}).then(values =>{
@@ -139,6 +161,14 @@ app.get('/environmentalstations', function (req, res) {
   })
 });
 
+app.get('/environmentalstations2', function (req, res) {
+  console.log("HolaNodo2");
+  Accel_cloud.find(
+    { date: { $gt: parseInt(Date.now()/1000) - 3600 } }
+  ).sort({date:-1}).then(values_2 =>{
+    res.render('envstat2', {values_2:values_2});
+  })
+});
 // Starting Server
 const port = process.env.PORT || 5000;
 http.listen(port, ()=>{

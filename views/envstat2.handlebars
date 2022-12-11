@@ -1,0 +1,98 @@
+<div class="container">
+    {{> rain_height}}
+</div>
+
+<script>
+      /********** Handle VALUES throw WebSocket and Socket.io *********/
+      function timedRefresh(timeoutPeriod) {
+        setTimeout("location.reload(true);",timeoutPeriod);
+      }
+
+      $(function () {
+        var socket = io.connect('http://localhost:5000', {transports:['websocket']});
+        //var socket = io.connect('http://iot-assignment1.herokuapp.com', {transports:['websocket']});
+        //var socket = io.connect('https://trabajodegrado.herokuapp.com', {transports:['websocket']});
+        
+        
+        /// Devices Management
+        /*************************************** ANALYSIS PLOT ***************************************/
+        var ctx4 = document.getElementById('rain-chart').getContext('2d');
+        var chartrain = new Chart(ctx4, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{fill:false, label: 'PH', backgroundColor: '#81F7F3', borderColor: '#81F7F3',
+                    data: []
+                }],
+                sum: 0,
+            },
+            options: { 
+              responsive: true,
+              title: {
+                display: true,
+                text: 'PH'
+              },
+              scales: {
+                yAxes: [{
+                  ticks: { suggestedMin: 0, suggestedMax: 50 }
+                }]
+              }
+            }
+        });
+        var ctx4a = document.getElementById('rain-chart-avg').getContext('2d');
+        var chartrainavg = new Chart(ctx4a, {
+            // The type of chart we want to create
+            type: 'line',
+            // The data for our dataset
+            data: {
+                labels: [],
+                datasets: [{fill:false, label: 'Promedio', backgroundColor: '#ff0066', borderColor: '#ff0066',
+                    data: []
+                }]
+            },
+            options: {
+              responsive: true,
+              scales: {
+                yAxes: [{
+                  ticks: { suggestedMin: 0, suggestedMax: 50 }
+                }]
+              }
+            }
+        });
+        /*************************************** WEBSOCKET EVENTS ***************************************/
+
+        /*************** Push lasthour values in the plot ***************/
+        socket.on("lastvalues", function(values){
+          if(charttemp.data.labels.length == 0 && values.length > 0){
+            values.reverse()
+            values.forEach( value =>{
+              chartrain.data.datasets[0].data.push(value.ph)
+              chartrain.data.sum = parseInt(chartrain.data.sum) + parseInt(value.ph)
+              chartrain.data.labels.push('');
+              chartrain.update();
+              chartrainavg.data.datasets[0].data.push(parseInt(chartrain.data.sum)/chartrain.data.datasets[0].data.length)
+              chartrainavg.data.labels.push('');
+              chartrainavg.update();
+            });
+            $('#avg-rain').html('<h4 align="center">' + (parseInt(chartrain.data.sum)/chartrain.data.datasets[0].data.length).toFixed(2) + ' </h4>');
+          }
+        });
+
+        /************************ LATEST VALUES MANAGEMENT ***************************/
+        socket.on('ph', function(data){
+          var payload = data.split(";");
+          $('#latest-rain').html('<h4 align="center">' + payload[1] + ' </h4>');
+          $('#lasthour-rain').prepend('<c><font size="2">' + "<"+ payload[1] + " > " +'</font></c>');
+          chartrain.data.datasets[0].data.push(payload[1]);
+          chartrain.data.labels.push('');
+          chartrain.data.sum = parseInt(chartrain.data.sum) + parseInt(payload[1]);
+          var avg = (parseInt(chartrain.data.sum)/chartrain.data.datasets[0].data.length).toFixed(2);
+          chartrainavg.data.datasets[0].data.push(avg);
+          chartrainavg.data.labels.push('');
+          chartrain.update();
+          chartrainavg.update();
+          $('#avg-rain').html('<h4 align="center">' + avg + ' </h4>');
+        });
+        /**************************************************************************************************************/
+      });
+    </script>
