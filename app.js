@@ -15,7 +15,6 @@ const timeout = 60;
 require('./models/Value');
 const Values = mongoose.model('values');
 console.log("Hola 1");
-console.log(Values);
 //require('./models/Accel_cloud');
 //const AccelCloud = mongoose.model('accel_cloud');
 //require('./models/Accel_edge');
@@ -43,7 +42,7 @@ io.on('connection', function(socket){
     io.emit("lastvalues", values);
   });
   console.log("Hola 3");
-  const subscriptionName1 = 'projects/trabajodegrado-369023/subscriptions/my-subscription';
+  const subscriptionName1 = 'projects/trabajodegrado-369023/subscriptions/data';
   // Creates a client; cache this for further use
   const pubSubClient = new PubSub();
   function listenForMessages() {
@@ -63,17 +62,22 @@ io.on('connection', function(socket){
       var payload = JSON.parse(message.data);
 
       const newValue = {
-        devideId: payload.id,
-        temperature: payload.temperatura,
-        humidity: payload.humedad,
-        ph: payload.ph,
-        date: payload.datetime
+        id: payload.id,
+        datetime: payload.datetime,
+        temperatura: payload.temperatura,
+        humedad: payload.humedad,
+        ph: payload.ph
       };
       new Values(newValue).save();
+      console.log(payload.id);
+      console.log(payload.datetime);
+      console.log(payload.temperatura);
+      console.log(payload.humedad);
+      console.log(payload.ph);
       // TEMPERATURE
-      io.emit("temperature", (payload.id + ";" + payload.temperatura + ";" + payload.datetime).toString());
+      io.emit("temperatura", (payload.id + ";" + payload.temperatura + ";" + payload.datetime).toString());
       // HUMIDITY
-      io.emit("humidity", (payload.id + ";" + payload.humedad + ";" + payload.datetime).toString());
+      io.emit("humedad", (payload.id + ";" + payload.humedad + ";" + payload.datetime).toString());
       // PH HEIGHT
       io.emit("ph", (payload.id + ";" + payload.ph + ";" + payload.datetime).toString());
       // "Ack" (acknowledge receipt of) the message
@@ -93,7 +97,7 @@ io.on('connection', function(socket){
 /***********************************************************************************************************************/
 console.log("Hola 4");
 //handlebars middleware
-app.engine('handlebars', exphbs({
+app.engine('handlebars', exphbs.engine({
   helpers: {stripTags: stripTags, eq:eq },
   defaultLayout: 'main'}));
   console.log("Hola 5");
