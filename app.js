@@ -42,7 +42,7 @@ io.on('connection', function(socket){
     io.emit("lastvalues", values);
   });
   console.log("Hola 3");
-  const subscriptionName1 = 'projects/trabajodegrado-369023/subscriptions/data';
+  const subscriptionName1 = 'projects/trabajodegrado-369023/subscriptions/my_subscription';
   // Creates a client; cache this for further use
   const pubSubClient = new PubSub();
   function listenForMessages() {
