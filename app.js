@@ -14,7 +14,6 @@ const timeout = 60;
 //load values model
 require('./models/Value');
 const Values = mongoose.model('values');
-console.log("Hola 1");
 //require('./models/Accel_cloud');
 //const AccelCloud = mongoose.model('accel_cloud');
 //require('./models/Accel_edge');
@@ -33,7 +32,6 @@ function predict(x, y, z){
   if(magnitude > 9.05 && magnitude < 9.95) return 1;
   else return 0;
 }
-console.log("Hola 2");
 // Imports the Google Cloud client library
 io.on('connection', function(socket){
   var values = Values.find(
@@ -41,7 +39,6 @@ io.on('connection', function(socket){
   ).sort({date:-1}).then(values => {
     io.emit("lastvalues", values);
   });
-  console.log("Hola 3");
   const subscriptionName1 = 'projects/trabajodegrado-369023/subscriptions/my_subscription';
   // Creates a client; cache this for further use
   const pubSubClient = new PubSub();
@@ -49,12 +46,10 @@ io.on('connection', function(socket){
     // References an existing subscription
     const subscription1 = pubSubClient.subscription(subscriptionName1);
     // Create an event handler to handle messages
-    console.log("aun no Entre");
 
     /********************************************* ENVIRONMENTAL STATIONS ********************************************/
     let messageCount = 0;
     const messageHandler = message => {
-      console.log("Entre");
       console.log(`Received message ${message.id}:`);
       console.log('\tData:' + message.data);
       console.log(`\tAttributes: ${message.attributes}`);
@@ -78,6 +73,7 @@ io.on('connection', function(socket){
         io.emit("temperatura", (payload.id + ";" + payload.temperatura + ";" + payload.datetime).toString());
         // HUMIDITY
         io.emit("humedad", (payload.id + ";" + payload.humedad + ";" + payload.datetime).toString());
+        console.log("HolaNodo2");
       } else {
         /*const newValue = {
           id: payload.id,
@@ -89,6 +85,7 @@ io.on('connection', function(socket){
         console.log(payload.datetime);
         console.log(payload.ph);
         io.emit("ph", (payload.id + ";" + payload.ph + ";" + payload.datetime).toString());        
+        console.log("HolaNodo1");
       }
       // "Ack" (acknowledge receipt of) the message
       message.ack();
@@ -100,12 +97,10 @@ io.on('connection', function(socket){
   listenForMessages();
 });
 /***********************************************************************************************************************/
-console.log("Hola 4");
 //handlebars middleware
 app.engine('handlebars', exphbs.engine({
   helpers: {stripTags: stripTags, eq:eq },
   defaultLayout: 'main'}));
-  console.log("Hola 5");
 app.set('view engine', 'handlebars');
 
 //body parser middleware
@@ -120,7 +115,6 @@ app.use(methodOverride('_method'));
 mongoose.Promise = global.Promise;
 //connect to mongoose
 const uri = "mongodb+srv://jeyepezv:Yuki17129718@tdg.yfkyoeg.mongodb.net/TdG"; 
-console.log("Hola 6");
 mongoose.connect(uri, {
   useNewUrlParser: true
 })
@@ -136,7 +130,6 @@ app.get('/', function (req, res) {
 
 // GET route for environmental dashboard
 app.get('/environmentalstations', function (req, res) {
-  console.log("HolaNodo1");
   Values.find(
     { date: { $gt: parseInt(Date.now()/1000) - 3600 } }
   ).sort({date:-1}).then(values =>{
